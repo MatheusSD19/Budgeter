@@ -1,389 +1,214 @@
----
-version: alpha
-name: Budgeter
-description: Dark-mode-first budget management app for multi-department enterprises. Precision engineering for financial data hierarchy.
-colors:
-  # Background Surfaces (Linear-inspired dark hierarchy)
-  bg_marketing: "#08090a"
-  bg_panel: "#0f1011"
-  bg_surface: "#191a1b"
-  bg_elevated: "#23252a"
-  
-  # Text Colors
-  text_primary: "#f7f8f8"
-  text_secondary: "#d0d6e0"
-  text_tertiary: "#8a8f98"
-  text_quaternary: "#62666d"
-  
-  # Brand & Accent (Adaptado para financeiro - azul profissional)
-  brand_primary: "#3b82f6"
-  brand_accent: "#60a5fa"
-  brand_hover: "#93c5fd"
-  
-  # Financial Status Colors
-  status_positive: "#10b981"
-  status_warning: "#f59e0b"
-  status_negative: "#ef4444"
-  status_info: "#3b82f6"
-  
-  # Borders
-  border_subtle: "rgba(255,255,255,0.05)"
-  border_standard: "rgba(255,255,255,0.08)"
-  border_prominent: "rgba(255,255,255,0.12)"
+# Budgeter
 
-typography:
-  # Display
-  display_xl:
-    fontFamily: Inter
-    fontSize: 48px
-    fontWeight: 600
-    lineHeight: 1.00
-    letterSpacing: "-1.056px"
-  
-  display_large:
-    fontFamily: Inter
-    fontSize: 36px
-    fontWeight: 600
-    lineHeight: 1.10
-    letterSpacing: "-0.792px"
-  
-  # Headings
-  h1:
-    fontFamily: Inter
-    fontSize: 28px
-    fontWeight: 600
-    lineHeight: 1.20
-    letterSpacing: "-0.56px"
-  
-  h2:
-    fontFamily: Inter
-    fontSize: 22px
-    fontWeight: 500
-    lineHeight: 1.30
-    letterSpacing: "-0.33px"
-  
-  h3:
-    fontFamily: Inter
-    fontSize: 18px
-    fontWeight: 600
-    lineHeight: 1.40
-    letterSpacing: "-0.18px"
-  
-  # Body
-  body_large:
-    fontFamily: Inter
-    fontSize: 16px
-    fontWeight: 400
-    lineHeight: 1.60
-    letterSpacing: "0"
-  
-  body:
-    fontFamily: Inter
-    fontSize: 14px
-    fontWeight: 400
-    lineHeight: 1.50
-    letterSpacing: "0"
-  
-  body_medium:
-    fontFamily: Inter
-    fontSize: 14px
-    fontWeight: 500
-    lineHeight: 1.50
-    letterSpacing: "0"
-  
-  # Labels & Data
-  label:
-    fontFamily: Inter
-    fontSize: 12px
-    fontWeight: 500
-    lineHeight: 1.40
-    letterSpacing: "0.02em"
-  
-  caption:
-    fontFamily: Inter
-    fontSize: 11px
-    fontWeight: 500
-    lineHeight: 1.40
-    letterSpacing: "0.02em"
-  
-  # Monospace (para valores monetários)
-  mono:
-    fontFamily: "JetBrains Mono"
-    fontSize: 14px
-    fontWeight: 400
-    lineHeight: 1.50
-    letterSpacing: "0"
-  
-  mono_large:
-    fontFamily: "JetBrains Mono"
-    fontSize: 18px
-    fontWeight: 500
-    lineHeight: 1.40
-    letterSpacing: "-0.36px"
+Sistema de gestão orçamentária empresarial com hierarquia Unidade → Setores → Centros de Custo.
 
-rounded:
-  sm: 4px
-  md: 6px
-  lg: 8px
-  xl: 12px
-  full: 9999px
+## Funcionalidades
 
-spacing:
-  xs: 4px
-  sm: 8px
-  md: 12px
-  lg: 16px
-  xl: 24px
-  2xl: 32px
-  3xl: 48px
+- 🏢 **Múltiplas Unidades**: Gerencie budgets de várias unidades/empresas
+- 📁 **Hierarquia Completa**: Unidade → Setores → Centros de Custo → Linhas de Budget
+- 📊 **Visualização em Tempo Real**: Cards de métricas com totais automáticos
+- 🔄 **Sincronização**: Dados sincronizados em tempo real entre usuários
+- 🌑 **Dark Mode**: Interface escrita otimizada para longas sessões de trabalho
+- 📱 **Responsivo**: Funciona em desktop e mobile
 
-components:
-  # Buttons
-  button_primary:
-    backgroundColor: "{colors.brand_primary}"
-    textColor: "#ffffff"
-    rounded: "{rounded.md}"
-    padding: "10px 16px"
-    typography: "{typography.body_medium}"
-  
-  button_primary_hover:
-    backgroundColor: "{colors.brand_hover}"
-  
-  button_secondary:
-    backgroundColor: "rgba(255,255,255,0.05)"
-    textColor: "{colors.text_secondary}"
-    border: "1px solid {colors.border_standard}"
-    rounded: "{rounded.md}"
-    padding: "10px 16px"
-    typography: "{typography.body_medium}"
-  
-  button_ghost:
-    backgroundColor: "transparent"
-    textColor: "{colors.text_tertiary}"
-    rounded: "{rounded.md}"
-    padding: "8px 12px"
-    typography: "{typography.body}"
-  
-  # Cards
-  card:
-    backgroundColor: "rgba(255,255,255,0.02)"
-    border: "1px solid {colors.border_standard}"
-    rounded: "{rounded.lg}"
-    padding: "{spacing.lg}"
-  
-  card_elevated:
-    backgroundColor: "{colors.bg_surface}"
-    border: "1px solid {colors.border_prominent}"
-    rounded: "{rounded.lg}"
-    padding: "{spacing.lg}"
-  
-  # Inputs
-  input:
-    backgroundColor: "rgba(255,255,255,0.02)"
-    textColor: "{colors.text_primary}"
-    border: "1px solid {colors.border_standard}"
-    rounded: "{rounded.md}"
-    padding: "10px 12px"
-    typography: "{typography.body}"
-  
-  input_focus:
-    border: "1px solid {colors.brand_accent}"
-  
-  # Data Display
-  metric_value:
-    typography: "{typography.mono_large}"
-    textColor: "{colors.text_primary}"
-  
-  metric_label:
-    typography: "{typography.label}"
-    textColor: "{colors.text_tertiary}"
-  
-  # Hierarchy Items
-  tree_item:
-    backgroundColor: "transparent"
-    border: "1px solid transparent"
-    rounded: "{rounded.md}"
-    padding: "12px 16px"
-  
-  tree_item_hover:
-    backgroundColor: "rgba(255,255,255,0.03)"
-  
-  tree_item_selected:
-    backgroundColor: "rgba(59,130,246,0.10)"
-    border: "1px solid rgba(59,130,246,0.30)"
-  
-  # Status Badges
-  badge_positive:
-    backgroundColor: "rgba(16,185,129,0.15)"
-    textColor: "{colors.status_positive}"
-    rounded: "{rounded.full}"
-    padding: "4px 10px"
-    typography: "{typography.caption}"
-  
-  badge_warning:
-    backgroundColor: "rgba(245,158,11,0.15)"
-    textColor: "{colors.status_warning}"
-    rounded: "{rounded.full}"
-    padding: "4px 10px"
-    typography: "{typography.caption}"
-  
-  badge_negative:
-    backgroundColor: "rgba(239,68,68,0.15)"
-    textColor: "{colors.status_negative}"
-    rounded: "{rounded.full}"
-    padding: "4px 10px"
-    typography: "{typography.caption}"
----
+## Tecnologias
 
-## Overview
+- HTML5, CSS3, JavaScript (ES6+)
+- Firebase Authentication
+- Firebase Realtime Database
+- Firebase Hosting
 
-Budgeter é um aplicativo de gestão orçamentária empresarial com foco em hierarquia de dados e eficiência visual. O design segue uma filosofia "dark-mode-native" onde a interface escura reduz fadiga visual durante longas sessões de trabalho com planilhas e números.
+## Configuração do Firebase
 
-A identidade visual comunica:
-- **Precisão:** Tipografia monoespaçada para valores, alinhamento rigoroso
-- **Hierarquia Clara:** Navegação em árvore visualmente distinta
-- **Status Imediato:** Cores semânticas para variações orçamentárias
-- **Profissionalismo:** Paleta sóbria com acentos azul corporativo
+### 1. Criar Projeto no Firebase
 
-## Colors
+1. Acesse [console.firebase.google.com](https://console.firebase.google.com)
+2. Clique em "Criar projeto"
+3. Dê um nome (ex: `budgeter-app`)
+4. Desative Google Analytics (ou ative, se preferir)
+5. Clique em "Criar projeto"
 
-### Superfícies
-- **bg_marketing (#08090a):** Fundo mais profundo — canvas principal
-- **bg_panel (#0f1011):** Painéis laterais, navegação
-- **bg_surface (#191a1b):** Cards elevados, dropdowns, modais
-- **bg_elevated (#23252a):** Elementos em destaque, hover states
+### 2. Ativar Authentication
 
-### Texto
-- **text_primary (#f7f8f8):** Texto principal — quase branco
-- **text_secondary (#d0d6e0):** Corpo de texto, descrições
-- **text_tertiary (#8a8f98):** Placeholders, metadados
-- **text_quaternary (#62666d):** Timestamps, desabilitados
+1. No menu lateral, clique em "Authentication"
+2. Clique em "Começar"
+3. Ative "Email/Password" (habilite "Email/Password" e salve)
+4. Vá em "Users" e clique em "Add user" para criar o primeiro usuário admin
 
-### Brand (Azul Corporativo)
-- **brand_primary (#3b82f6):** CTAs primários, marca
-- **brand_accent (#60a5fa):** Elementos interativos, seleção
-- **brand_hover (#93c5fd):** Estados hover
+### 3. Criar Realtime Database
 
-### Status Financeiro
-- **status_positive (#10b981):** Dentro do orçamento, superávit
-- **status_warning (#f59e0b):** Atenção, próximo do limite
-- **status_negative (#ef4444):** Estourado, deficit
-- **status_info (#3b82f6):** Informação, projeções
+1. No menu lateral, clique em "Realtime Database"
+2. Clique em "Criar banco de dados"
+3. Escolha a região mais próxima (ex: `us-central1`)
+4. No modo de segurança, selecione "Modo bloqueado" (depois atualizaremos as regras)
+5. Clique em "Ativar"
 
-### Bordas
-- **border_subtle (rgba 5%):** Divisões mais leves
-- **border_standard (rgba 8%):** Borda padrão de cards
-- **border_prominent (rgba 12%):** Destaque, elementos selecionados
+### 4. Configurar Regras de Segurança
 
-## Typography
+1. Na aba "Regras" do Realtime Database
+2. Substitua o conteúdo pelas regras do arquivo `docs/ARQUITETURA.md`
+3. Clique em "Publicar"
 
-### Princípios
-- **Inter** para todo texto de interface — legível em tamanhos pequenos
-- **JetBrains Mono** para valores monetários — alinhamento vertical consistente
-- **Peso 500-600** para ênfase — nunca usar bold (700)
-- **Tracking negativo** em headlines grandes (-0.56px a -1.056px)
+### 5. Obter Configuração do App
 
-### Hierarquia de Dados
-1. **Valores Monetários:** JetBrains Mono 18px weight 500 — destaque máximo
-2. **Títulos de Seção:** Inter 22px weight 500 — organização visual
-3. **Labels de Campo:** Inter 12px weight 500 uppercase tracking — escaneabilidade
-4. **Metadados:** Inter 11px weight 500 — contexto secundário
+1. Vá em "Configurações do projeto" (engrenagem ≡)
+2. Na aba "Geral", role até "Seus aplicativos"
+3. Clique no ícone `</>` para adicionar um app web
+4. Dê um apelido (ex: `budgeter-web`)
+5. Clique em "Registrar app"
+6. Copie o objeto `firebaseConfig`
+7. Cole no arquivo `index.html`, substituindo o objeto vazio em `firebaseConfig`
 
-## Components
-
-### Árvore de Hierarquia (Elemento Central)
-A navegação principal exibe a estrutura Unidade → Setores → Centros de Custo como uma árvore expansível:
-
-- **Indentação visual:** 24px por nível
-- **Ícones de estado:** Chevron para expandir/colapsar
-- **Status inline:** Badge de cor ao lado do nome quando houver alerta
-- **Seleção:** Background azul translúcido com borda sutil
-
-### Cards de Métricas
-Exibição de totais consolidados:
-- **Valor principal:** Mono 18px alinhado à direita
-- **Label:** Inter 12px uppercase, cor terciária
-- **Variação:** Badge colorido com percentual
-- **Tendência:** Mini sparkline (opcional)
-
-### Inputs de Budget
-Campos para entrada de valores:
-- **Prefixo:** R$ fixo à esquerda, cor terciária
-- **Valor:** Alinhado à direita, mono
-- **Estados:** Default → Focus (borda azul) → Filled (background sutil)
-
-### Tabela de Consolidação
-Visualização tabular do budget:
-- **Header:** Inter 12px uppercase, border inferior
-- **Rows:** Hover sutil, zebra striping opcional
-- **Totais:** Background elevado, fonte em destaque
-- **Sticky header:** Header fixo em scroll
-
-## Layout
-
-### Estrutura de Página
-```
-┌─────────────────────────────────────────────────────┐
-│ HEADER (logo, unidade atual, usuário)               │
-├──────────┬──────────────────────────────────────────┤
-│          │                                          │
-│ SIDEBAR  │  MAIN CONTENT                            │
-│ (árvore  │  ┌─────────────┬───────────────────────┐ │
-│  de      │  │ Métricas    │ Visualizações         │ │
-│  navega- │  │ Cards       │ (gráficos/tabelas)    │ │
-│  ção)    │  └─────────────┴───────────────────────┘ │
-│          │                                          │
-│          │  ┌─────────────────────────────────────┐ │
-│          │  │ Editor de Budget                    │ │
-│          │  │ (forms/tabela de input)             │ │
-│          │  └─────────────────────────────────────┘ │
-│          │                                          │
-└──────────┴──────────────────────────────────────────┘
+Exemplo:
+```javascript
+const firebaseConfig = {
+    apiKey: "AIzaSyB...",
+    authDomain: "budgeter-app.firebaseapp.com",
+    databaseURL: "https://budgeter-app-default-rtdb.firebaseio.com",
+    projectId: "budgeter-app",
+    storageBucket: "budgeter-app.appspot.com",
+    messagingSenderId: "123456789",
+    appId: "1:123456789:web:abcdef123456"
+};
 ```
 
-- **Sidebar:** 280px fixo, scroll independente
-- **Main:** Fluido, max-width 1400px, padding 24px
-- **Grid interno:** 12 colunas, gap 16px
+### 6. Instalar Firebase CLI (para deploy)
 
-### Responsividade
-- **Desktop (>1024px):** Layout completo com sidebar
-- **Tablet (768-1024px):** Sidebar colapsável, métricas em 2 colunas
-- **Mobile (<768px):** Sidebar como drawer, layout single column
+```bash
+# Instale o Node.js primeiro: https://nodejs.org
 
-## Elevation & Depth
+# Instale o Firebase CLI globalmente
+npm install -g firebase-tools
 
-| Nível | Tratamento | Uso |
-|-------|------------|-----|
-| Flat | bg_marketing | Fundo da página |
-| Subtle | bg_panel | Sidebar, navegação |
-| Surface | bg_surface + border | Cards, modais |
-| Elevated | bg_elevated + prominent border | Cards em destaque, totais |
-| Overlay | rgba(0,0,0,0.85) | Backdrop de modais |
+# Faça login
+firebase login
 
-## Do's and Don'ts
+# Inicialize o projeto na pasta do Budgeter
+cd Budgeter
+firebase init hosting
 
-### Do
-- Usar JetBrains Mono para todo valor monetário
-- Manter alinhamento à direita em colunas numéricas
-- Usar cores de status apenas para indicar condição (não decoração)
-- Aplicar tracking negativo em títulos grandes
-- Usar bordas semi-transparentes (nunca sólidas escuras)
-- Manter contraste mínimo 4.5:1 para acessibilidade
+# Selecione:
+# - "Use an existing project" → escolha seu projeto
+# - "What do you want to use as your public directory?" → digite: . (ponto)
+# - "Configure as a single-page app?" → digite: N
+# - "Set up automatic builds and deploys with GitHub?" → digite: N
+```
 
-### Don't
-- Nunca usar pure white (#fff) — text_primary (#f7f8f8) é o máximo
-- Não misturar mais de uma cor de destaque (azul é suficiente)
-- Evitar sombras em dark mode — usar elevação via luminância
-- Não usar bold (700) — máximo 600
-- Nunca alinhar valores monetários à esquerda
+### 7. Fazer Deploy
 
-## Agent Prompt Guide
+```bash
+# Na pasta Budgeter
+firebase deploy
 
-### Exemplo: Card de Métrica
-"Create a metric card on bg_surface background. Header label at 12px Inter weight 500 uppercase, color text_tertiary, letter-spacing 0.02em. Value at 18px JetBrains Mono weight 500, color text_primary, aligned right. Add a positive badge with 10b981 background at 15% opacity, text same color, rounded full, 4px 10px padding."
+# O terminal mostrará a URL de acesso, ex:
+# ✔  Deploy complete!
+# Project Console: https://console.firebase.google.com/project/budgeter-app/overview
+# Hosting URL: https://budgeter-app.web.app
+```
 
-### Exemplo: Item de Árvore
-"Design a tree navigation item with 24px left padding per depth level. Use Inter 14px weight 400 for label, color text_secondary. Chevron icon 16px, color text_quaternary, rotated 90° when expanded. On hover: background rgba(255,255,255,0.03). When selected: background rgba(59,130,246,0.10), border 1px solid rgba(59,130,246,0.30), rounded 6px."
+## Estrutura de Arquivos
 
-### Exemplo: Input de Valor
-"Create a currency input with R$ prefix at left in text_tertiary, 14px. Input field with mono font, text_primary, aligned right. Background rgba(255,255,255,0.02), border 1px solid rgba(255,255,255,0.08), rounded 6px, padding 10px 12px. On focus: border transitions to brand_accent."
+```
+Budgeter/
+├──── index.html              # Entry point
+├──── css/
+│   ├──── main.css              # Variáveis e resets
+│   ├──── components.css        # Cards, buttons, inputs
+│   ├──── layout.css            # Grid, sidebar, header
+│   └──── dark-theme.css        # Tema escuro Linear-inspired
+├──── js/
+│   ├──── app.js                # Inicialização do app
+│   ├──── auth.js               # Autenticação
+│   ├──── database.js           # CRUD Firebase
+│   ├──── tree.js               # Componente de árvore
+│   ├──── budget.js             # Lógica do editor
+│   └──── formatters.js         # Moeda, números, datas
+├──── DESIGN.md               # Especificação visual
+├──── README.md               # Este arquivo
+└──── docs/
+    └──── ARQUITETURA.md        # Arquitetura de dados
+```
+
+## Dados Iniciais (Seed)
+
+Para popular o banco com dados de exemplo, use o Firebase Console ou o Firebase CLI:
+
+```bash
+firebase database:set / seed.json
+```
+
+Crie um arquivo `seed.json` com a estrutura documentada em `docs/ARQUITETURA.md`.
+
+## Roles de Usuário
+
+- **admin**: Acesso total a todas as unidades e configurações
+- **manager**: Acesso às unidades vinculadas, pode editar budgets
+- **viewer**: Apenas visualização
+
+Para definir o role de um usuário, edite diretamente no Realtime Database:
+
+```json
+{
+  "usuarios": {
+    "UID_DO_USUARIO": {
+      "id": "UID_DO_USUARIO",
+      "nome": "Nome do Usuário",
+      "email": "email@exemplo.com",
+      "role": "admin",
+      "unidades": ["unidade_001", "unidade_002"]
+    }
+  }
+}
+```
+
+## Personalização
+
+### Alterar Ano Base
+
+Edite `js/budget.js`, método `constructor`:
+
+```javascript
+this.state = {
+    ano: 2025, // Altere aqui
+    // ...
+};
+```
+
+### Adicionar Campos ao Budget
+
+1. Atualize a tabela em `index.html`
+2. Atualize os métodos em `js/budget.js`:
+   - `createLinhaRow()` - renderização
+   - `saveLinha()` - salvamento
+   - `updateTotais()` - cálculos
+
+### Alterar Cores
+
+Edite as variáveis CSS em `css/main.css`:
+
+```css
+:root {
+    --brand-primary: #sua-cor;      /* Cor primária */
+    --brand-accent: #sua-cor;       /* Cor de destaque */
+    --status-positive: #sua-cor;    /* Cor de sucesso */
+    --status-negative: #sua-cor;    /* Cor de erro */
+}
+```
+
+## Roadmap
+
+- [ ] Importação de budgets via Excel/CSV
+- [ ] Exportação de relatórios PDF
+- [ ] Gráficos e dashboards avançados
+- [ ] Orçamento realizado vs orçado
+- [ ] Alertas de budget estourado
+- [ ] Comentários em linhas de budget
+- [ ] Histórico de alterações
+
+## Licença
+
+MIT - Livre para uso comercial e modificação.
+
+---
+
+**Design inspirado no Linear.app** - Ultra-minimal dark mode

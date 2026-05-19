@@ -1,0 +1,126 @@
+/* Budgeter - Dark Theme */
+
+/* Login Screen */
+.login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-marketing);
+}
+
+.login-card {
+    width: 360px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-standard);
+    border-radius: var(--radius-xl);
+    padding: var(--space-2xl);
+}
+
+.login-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
+}
+
+.login-logo h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.login-subtitle {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    margin-bottom: var(--space-xl);
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-error {
+    margin-top: var(--space-sm);
+    font-size: 13px;
+    color: var(--status-negative);
+    min-height: 20px;
+}
+
+/* Metric Cards */
+.metric-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-standard);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    flex: 1;
+}
+
+.metric-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: var(--text-tertiary);
+    margin-bottom: var(--space-sm);
+}
+
+.metric-value {
+    font-family: var(--font-mono);
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: var(--space-xs);
+}
+
+.metric-trend {
+    font-size: 12px;
+    color: var(--text-quaternary);
+}
+
+/* Budget Editor */
+.budget-editor {
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px solid var(--border-standard);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.editor-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-lg) var(--space-xl);
+    border-bottom: 1px solid var(--border-standard);
+}
+
+.editor-header h2 {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.editor-actions {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+/* Consolidation View */
+.consolidation-view {
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px solid var(--border-standard);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-top: var(--space-xl);
+}
+
+.consolidation-content {
+    padding: var(--space-xl);
+    color: var(--text-tertiary);
+    font-size: 13px;
+}
