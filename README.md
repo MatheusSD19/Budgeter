@@ -1,214 +1,210 @@
 # Budgeter
 
-Sistema de gestão orçamentária empresarial com hierarquia Unidade → Setores → Centros de Custo.
+Sistema de gestão orçamentária empresarial multiusuário.
+Estrutura: **Filial → Centro de Custo → Classe de Custo → Despesa**, com importação de Landing (CSV/Excel), versionamento, comparativos YoY, reajuste em massa e módulo de Volume.
 
-## Funcionalidades
-
-- 🏢 **Múltiplas Unidades**: Gerencie budgets de várias unidades/empresas
-- 📁 **Hierarquia Completa**: Unidade → Setores → Centros de Custo → Linhas de Budget
-- 📊 **Visualização em Tempo Real**: Cards de métricas com totais automáticos
-- 🔄 **Sincronização**: Dados sincronizados em tempo real entre usuários
-- 🌑 **Dark Mode**: Interface escrita otimizada para longas sessões de trabalho
-- 📱 **Responsivo**: Funciona em desktop e mobile
-
-## Tecnologias
-
-- HTML5, CSS3, JavaScript (ES6+)
-- Firebase Authentication
-- Firebase Realtime Database
-- Firebase Hosting
-
-## Configuração do Firebase
-
-### 1. Criar Projeto no Firebase
-
-1. Acesse [console.firebase.google.com](https://console.firebase.google.com)
-2. Clique em "Criar projeto"
-3. Dê um nome (ex: `budgeter-app`)
-4. Desative Google Analytics (ou ative, se preferir)
-5. Clique em "Criar projeto"
-
-### 2. Ativar Authentication
-
-1. No menu lateral, clique em "Authentication"
-2. Clique em "Começar"
-3. Ative "Email/Password" (habilite "Email/Password" e salve)
-4. Vá em "Users" e clique em "Add user" para criar o primeiro usuário admin
-
-### 3. Criar Realtime Database
-
-1. No menu lateral, clique em "Realtime Database"
-2. Clique em "Criar banco de dados"
-3. Escolha a região mais próxima (ex: `us-central1`)
-4. No modo de segurança, selecione "Modo bloqueado" (depois atualizaremos as regras)
-5. Clique em "Ativar"
-
-### 4. Configurar Regras de Segurança
-
-1. Na aba "Regras" do Realtime Database
-2. Substitua o conteúdo pelas regras do arquivo `docs/ARQUITETURA.md`
-3. Clique em "Publicar"
-
-### 5. Obter Configuração do App
-
-1. Vá em "Configurações do projeto" (engrenagem ≡)
-2. Na aba "Geral", role até "Seus aplicativos"
-3. Clique no ícone `</>` para adicionar um app web
-4. Dê um apelido (ex: `budgeter-web`)
-5. Clique em "Registrar app"
-6. Copie o objeto `firebaseConfig`
-7. Cole no arquivo `index.html`, substituindo o objeto vazio em `firebaseConfig`
-
-Exemplo:
-```javascript
-const firebaseConfig = {
-    apiKey: "AIzaSyB...",
-    authDomain: "budgeter-app.firebaseapp.com",
-    databaseURL: "https://budgeter-app-default-rtdb.firebaseio.com",
-    projectId: "budgeter-app",
-    storageBucket: "budgeter-app.appspot.com",
-    messagingSenderId: "123456789",
-    appId: "1:123456789:web:abcdef123456"
-};
-```
-
-### 6. Instalar Firebase CLI (para deploy)
-
-```bash
-# Instale o Node.js primeiro: https://nodejs.org
-
-# Instale o Firebase CLI globalmente
-npm install -g firebase-tools
-
-# Faça login
-firebase login
-
-# Inicialize o projeto na pasta do Budgeter
-cd Budgeter
-firebase init hosting
-
-# Selecione:
-# - "Use an existing project" → escolha seu projeto
-# - "What do you want to use as your public directory?" → digite: . (ponto)
-# - "Configure as a single-page app?" → digite: N
-# - "Set up automatic builds and deploys with GitHub?" → digite: N
-```
-
-### 7. Fazer Deploy
-
-```bash
-# Na pasta Budgeter
-firebase deploy
-
-# O terminal mostrará a URL de acesso, ex:
-# ✔  Deploy complete!
-# Project Console: https://console.firebase.google.com/project/budgeter-app/overview
-# Hosting URL: https://budgeter-app.web.app
-```
-
-## Estrutura de Arquivos
-
-```
-Budgeter/
-├──── index.html              # Entry point
-├──── css/
-│   ├──── main.css              # Variáveis e resets
-│   ├──── components.css        # Cards, buttons, inputs
-│   ├──── layout.css            # Grid, sidebar, header
-│   └──── dark-theme.css        # Tema escuro Linear-inspired
-├──── js/
-│   ├──── app.js                # Inicialização do app
-│   ├──── auth.js               # Autenticação
-│   ├──── database.js           # CRUD Firebase
-│   ├──── tree.js               # Componente de árvore
-│   ├──── budget.js             # Lógica do editor
-│   └──── formatters.js         # Moeda, números, datas
-├──── DESIGN.md               # Especificação visual
-├──── README.md               # Este arquivo
-└──── docs/
-    └──── ARQUITETURA.md        # Arquitetura de dados
-```
-
-## Dados Iniciais (Seed)
-
-Para popular o banco com dados de exemplo, use o Firebase Console ou o Firebase CLI:
-
-```bash
-firebase database:set / seed.json
-```
-
-Crie um arquivo `seed.json` com a estrutura documentada em `docs/ARQUITETURA.md`.
-
-## Roles de Usuário
-
-- **admin**: Acesso total a todas as unidades e configurações
-- **manager**: Acesso às unidades vinculadas, pode editar budgets
-- **viewer**: Apenas visualização
-
-Para definir o role de um usuário, edite diretamente no Realtime Database:
-
-```json
-{
-  "usuarios": {
-    "UID_DO_USUARIO": {
-      "id": "UID_DO_USUARIO",
-      "nome": "Nome do Usuário",
-      "email": "email@exemplo.com",
-      "role": "admin",
-      "unidades": ["unidade_001", "unidade_002"]
-    }
-  }
-}
-```
-
-## Personalização
-
-### Alterar Ano Base
-
-Edite `js/budget.js`, método `constructor`:
-
-```javascript
-this.state = {
-    ano: 2025, // Altere aqui
-    // ...
-};
-```
-
-### Adicionar Campos ao Budget
-
-1. Atualize a tabela em `index.html`
-2. Atualize os métodos em `js/budget.js`:
-   - `createLinhaRow()` - renderização
-   - `saveLinha()` - salvamento
-   - `updateTotais()` - cálculos
-
-### Alterar Cores
-
-Edite as variáveis CSS em `css/main.css`:
-
-```css
-:root {
-    --brand-primary: #sua-cor;      /* Cor primária */
-    --brand-accent: #sua-cor;       /* Cor de destaque */
-    --status-positive: #sua-cor;    /* Cor de sucesso */
-    --status-negative: #sua-cor;    /* Cor de erro */
-}
-```
-
-## Roadmap
-
-- [ ] Importação de budgets via Excel/CSV
-- [ ] Exportação de relatórios PDF
-- [ ] Gráficos e dashboards avançados
-- [ ] Orçamento realizado vs orçado
-- [ ] Alertas de budget estourado
-- [ ] Comentários em linhas de budget
-- [ ] Histórico de alterações
-
-## Licença
-
-MIT - Livre para uso comercial e modificação.
+100% hospedável no plano gratuito (Spark) do Firebase: usa apenas Authentication, Realtime Database e Hosting.
 
 ---
 
-**Design inspirado no Linear.app** - Ultra-minimal dark mode
+## Sumário
+
+- [Stack](#stack)
+- [Rodando localmente (emuladores)](#rodando-localmente-emuladores)
+- [Login de teste](#login-de-teste)
+- [Painel Admin](#painel-admin)
+- [Importação de Landing (CSV/Excel)](#importação-de-landing-csvexcel)
+- [Reajuste em massa & comparativo YoY](#reajuste-em-massa--comparativo-yoy)
+- [Volume (Budget & Landing)](#volume-budget--landing)
+- [Estrutura de pastas](#estrutura-de-pastas)
+- [Deploy em produção (Firebase Hosting)](#deploy-em-produção-firebase-hosting)
+
+---
+
+## Stack
+
+- HTML5 + ES Modules (sem build step)
+- Firebase Authentication (email/senha)
+- Firebase Realtime Database
+- Firebase Hosting
+- SheetJS (carregado sob demanda no admin) para parse de XLSX
+
+## Rodando localmente (emuladores)
+
+Pré-requisitos: **Node.js 18+** e Java 11+ (necessário para os emuladores do Firebase).
+
+```bash
+# 1. Instalar firebase-tools localmente
+npm install
+
+# 2. Iniciar os emuladores (Auth + RTDB + Hosting + UI)
+npm run dev
+
+# 3. Em outro terminal, popular dados de exemplo + criar usuários demo
+npm run seed
+```
+
+Endereços:
+- App:        http://localhost:5000
+- Admin:      http://localhost:5000/admin
+- Emulator UI: http://localhost:4000
+
+> O `js/config.js` detecta `localhost` e conecta automaticamente nos emuladores. Em produção, conecta no projeto real.
+
+O comando `npm run dev` faz **import/export** do estado dos emuladores em `seed/export/` (gitignored), então seus dados de teste persistem entre execuções. Use `npm run dev:fresh` para começar do zero.
+
+## Login de teste
+
+O script `npm run seed` cria três usuários no Auth emulator:
+
+| Email                       | Senha         | Papel       |
+|----------------------------|---------------|-------------|
+| admin@budgeter.local        | admin1234     | admin       |
+| financeiro@budgeter.local   | finance1234   | financeiro  |
+| gestor@budgeter.local       | gestor1234    | manager     |
+
+## Painel Admin
+
+Acesse via botão **Admin** no header (visível para `admin` e `financeiro`).
+
+Inclui:
+
+- **Usuários**: vincular UID já existente no Firebase Auth ou criar nova conta (em ambiente local). Definir papel, perfil, filiais com acesso e CCs específicos.
+- **Perfis & Permissões**: templates de permissões reutilizáveis.
+- **Filiais**: CRUD da entidade Filial (código, nome, FIMMO, ativo).
+- **Centros de Custo**: CRUD por filial.
+- **Classes de Custo**: catálogo global compartilhado entre filiais.
+- **Importar Landing**: upload de CSV/XLSX (descrito abaixo).
+- **Histórico de Landings**: navegar versões salvas, ver detalhes, aplicar como Budget de outro ano ou excluir.
+- **Volume**: lançar Budget e Landing de volume por filial/ano.
+
+### Papéis (roles)
+
+| Role        | Pode                                                               |
+|-------------|--------------------------------------------------------------------|
+| admin       | tudo, inclusive gerir usuários                                     |
+| financeiro  | gerir estrutura, importar Landing, editar Budget de qualquer filial|
+| manager     | editar Budget e Volume das filiais e CCs atribuídos                |
+| viewer      | apenas leitura                                                     |
+
+## Importação de Landing (CSV/Excel)
+
+Em **Admin → Importar Landing**.
+
+Colunas reconhecidas no cabeçalho (insensível a maiúsculas e acentos):
+
+- **Centro de Custo** *(obrigatório)*
+- Budget (categoria livre, vira o campo `budget` no CC)
+- Filial *(usa o "padrão" se omitida)*
+- Fimmo *(código externo da filial)*
+- **Classe de Custo** *(obrigatório)*
+- Descrição Classe
+- Grupo Geral
+- Sub-Grupo
+- **Descrição Despesa** *(obrigatório)*
+- Janeiro, Fevereiro, ..., Dezembro *(números, com vírgula ou ponto decimal)*
+- RESPONSÁVEIS
+- OUTRAS OBSERVAÇÕES
+
+Comportamento:
+- **Auto-cadastro**: cria automaticamente Filiais, CCs e Classes que ainda não existem no banco.
+- **Versionamento**: cada importação gera uma nova versão em `landings/{ano}/v{timestamp}` — nada é sobrescrito.
+- **Aplicação opcional como Budget**: você pode escolher um ano de destino para já replicar como Budget editável.
+
+Exemplo CSV mínimo (separador `;`):
+
+```csv
+Centro de Custo;Budget;Filial;Fimmo;Classe de Custo;Descrição Classe;Grupo Geral;Sub-Grupo;Descrição Despesa;Janeiro;Fevereiro;Março;Abril;Maio;Junho;Julho;Agosto;Setembro;Outubro;Novembro;Dezembro;RESPONSÁVEIS;OUTRAS OBSERVAÇÕES
+CC001;Categoria A;Filial Demo;EXTCOD1;CLS001;Descrição classe;Grupo;Sub;Despesa exemplo;1000;1000;1000;1000;1000;1000;1000;1000;1000;1000;1000;1000;Responsável;Obs livre
+```
+
+## Reajuste em massa & comparativo YoY
+
+No editor de Budget:
+
+- **Reajuste %**: aplica um percentual (positivo ou negativo) em todas as linhas do filtro atual, em meses selecionáveis (padrão: todos). Modos: aumentar valores existentes ou copiar do último Landing e aplicar %.
+- **Comparar YoY**: abre tabela com Landing do ano anterior vs Budget do ano corrente, variação em R$ e %, campo de **justificativa** salvo por linha (`justificativas/{ano}/{filial}/{cc}/{linha}`).
+
+## Volume (Budget & Landing)
+
+No painel Admin há uma aba para informar separadamente o **volume** mensal (ex.: toneladas, m³) por filial e ano, com duas tabelas: Budget e Landing.
+
+## Estrutura de pastas
+
+```
+Budgeter/
+├── index.html                # App principal (editor de Budget)
+├── admin.html                # Painel administrativo
+├── firebase.json             # Hosting + emulators
+├── database.rules.json       # Regras do RTDB
+├── package.json              # Scripts npm (dev, seed, deploy)
+├── seed/
+│   ├── seed-data.json        # Estrutura inicial (apenas perfis padrão)
+│   └── seed.mjs              # Carregador via REST nos emuladores
+├── css/                      # main, dark-theme, layout, components
+└── js/
+    ├── firebase-init.js      # Init + conexão com emuladores
+    ├── config.js             # Detecção local vs prod
+    ├── auth.js               # AuthManager (papel/perfil/filiais)
+    ├── database.js           # CRUD do schema v2
+    ├── tree.js               # Sidebar de navegação
+    ├── budget.js             # Editor achatado (estilo planilha)
+    ├── tools.js              # Reajuste + YoY
+    ├── formatters.js
+    └── admin/
+        ├── admin.js          # Roteamento de tabs
+        ├── usuarios.js       # CRUD usuários
+        ├── perfis.js         # CRUD perfis
+        ├── filiais.js        # CRUD filiais
+        ├── ccs.js            # CRUD centros de custo
+        ├── classes.js        # CRUD classes de custo
+        ├── landing-import.js # Upload CSV/XLSX
+        ├── landing-historico.js
+        ├── volume.js
+        └── utils.js
+```
+
+## Deploy em produção (Firebase Hosting)
+
+```bash
+# Pré-requisitos: projeto criado no Firebase, RTDB ativo, Auth com email/senha
+firebase login
+firebase use --add   # selecione seu projeto
+
+# Atualiza regras + hosting
+npm run deploy
+
+# Só regras
+npm run deploy:rules
+```
+
+Antes do primeiro deploy, ajuste `js/config.js` se quiser usar outro projeto (apiKey/databaseURL). A configuração atual aponta para o projeto `budgeter-app-44332`.
+
+### Primeiro admin em produção
+
+1. Cadastre o admin pelo Console do Firebase (Authentication → Add user).
+2. No RTDB (aba Data), crie manualmente o nó `usuarios/{UID}` com:
+
+```json
+{
+  "id": "{UID}", "email": "admin@empresa.com", "nome": "Admin",
+  "role": "admin", "ativo": true, "createdAt": 1700000000000
+}
+```
+
+3. Faça login pela aplicação e use o painel Admin para criar perfis, filiais, CCs, classes e demais usuários.
+
+---
+
+## Roadmap
+
+- [ ] Cloud Function callable (Spark plan) para criar/desativar usuários sem usar Console
+- [ ] Dashboards com gráficos (linha/coluna por mês)
+- [ ] Export do Budget para Excel
+- [ ] Realizado (lançamentos contábeis) vs Budget
+- [ ] Aprovação por workflow (gestor → financeiro → admin)
+- [ ] Multi-empresa (acima de Filial)
+
+## Licença
+
+MIT
