@@ -5,9 +5,27 @@
       "firebase.json",
       ".firebaserc",
       "**/.*",
+      "**/node_modules/**",
       "docs/**",
+      "seed/**",
       "DESIGN.md",
-      "README.md"
+      "README.md",
+      "package.json",
+      "package-lock.json",
+      "database.rules.json"
+    ],
+    "rewrites": [
+      { "source": "/admin", "destination": "/admin.html" }
     ]
+  },
+  "database": {
+    "rules": "database.rules.json"
+  },
+  "emulators": {
+    "auth": { "port": 9099 },
+    "database": { "port": 9000 },
+    "hosting": { "port": 5000 },
+    "ui": { "enabled": true, "port": 4000 },
+    "singleProjectMode": true
   }
 }

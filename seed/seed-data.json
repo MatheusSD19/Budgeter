@@ -1,0 +1,294 @@
+{
+  "config": {
+    "versao": "2.0.0",
+    "anoAtual": 2026,
+    "anoLandingPadrao": 2025,
+    "moeda": "BRL",
+    "locale": "pt-BR"
+  },
+
+  "perfis": {
+    "perfil_admin": {
+      "id": "perfil_admin",
+      "nome": "Administrador",
+      "descricao": "Acesso total ao sistema",
+      "role": "admin",
+      "permissoes": {
+        "gerirUsuarios": true,
+        "gerirEstrutura": true,
+        "importarLanding": true,
+        "editarBudget": true,
+        "editarLanding": true,
+        "editarVolume": true,
+        "verRelatorios": true
+      }
+    },
+    "perfil_financeiro": {
+      "id": "perfil_financeiro",
+      "nome": "Financeiro",
+      "descricao": "Equipe financeira: importa Landing, edita Budget de todas as filiais",
+      "role": "financeiro",
+      "permissoes": {
+        "gerirUsuarios": false,
+        "gerirEstrutura": true,
+        "importarLanding": true,
+        "editarBudget": true,
+        "editarLanding": true,
+        "editarVolume": true,
+        "verRelatorios": true
+      }
+    },
+    "perfil_gestor_filial": {
+      "id": "perfil_gestor_filial",
+      "nome": "Gestor de Filial",
+      "descricao": "Edita Budget e Volume apenas das filiais e CCs autorizados",
+      "role": "manager",
+      "permissoes": {
+        "gerirUsuarios": false,
+        "gerirEstrutura": false,
+        "importarLanding": false,
+        "editarBudget": true,
+        "editarLanding": false,
+        "editarVolume": true,
+        "verRelatorios": true
+      }
+    },
+    "perfil_viewer": {
+      "id": "perfil_viewer",
+      "nome": "Visualizador",
+      "descricao": "Apenas leitura",
+      "role": "viewer",
+      "permissoes": {
+        "gerirUsuarios": false,
+        "gerirEstrutura": false,
+        "importarLanding": false,
+        "editarBudget": false,
+        "editarLanding": false,
+        "editarVolume": false,
+        "verRelatorios": true
+      }
+    }
+  },
+
+  "filiais": {
+    "filial_santarem": {
+      "id": "filial_santarem",
+      "nome": "Santarém",
+      "codigo": "STM",
+      "fimmo": "FIMMO864",
+      "ativo": true,
+      "ordem": 1
+    }
+  },
+
+  "centrosCusto": {
+    "filial_santarem": {
+      "1569108": {
+        "id": "1569108",
+        "filialId": "filial_santarem",
+        "codigo": "1569108",
+        "nome": "Aprendizes",
+        "budget": "Aprendizes",
+        "ativo": true,
+        "ordem": 1
+      },
+      "1569297": {
+        "id": "1569297",
+        "filialId": "filial_santarem",
+        "codigo": "1569297",
+        "nome": "Manutenção Frota",
+        "budget": "Manutenção Frota",
+        "ativo": true,
+        "ordem": 2
+      },
+      "1569312": {
+        "id": "1569312",
+        "filialId": "filial_santarem",
+        "codigo": "1569312",
+        "nome": "Frota Fluvial",
+        "budget": "Frota Fluvial",
+        "ativo": true,
+        "ordem": 3
+      }
+    }
+  },
+
+  "classesCusto": {
+    "48102046": {
+      "id": "48102046",
+      "codigo": "48102046",
+      "descricao": "Serv. Profissional -",
+      "grupoGeral": "Fixed Cost",
+      "subGrupo": "Outsourced Services"
+    },
+    "48102003": {
+      "id": "48102003",
+      "codigo": "48102003",
+      "descricao": "Despesa c/ Condução",
+      "grupoGeral": "Production Overheads",
+      "subGrupo": "Others Overheads"
+    },
+    "48102022": {
+      "id": "48102022",
+      "codigo": "48102022",
+      "descricao": "Desp. Viagem-Refeição",
+      "grupoGeral": "Production Overheads",
+      "subGrupo": "Others Overheads"
+    },
+    "48102023": {
+      "id": "48102023",
+      "codigo": "48102023",
+      "descricao": "Desp. Viagem-Hotel",
+      "grupoGeral": "Production Overheads",
+      "subGrupo": "Others Overheads"
+    },
+    "48102024": {
+      "id": "48102024",
+      "codigo": "48102024",
+      "descricao": "Desp. Viagem-Transporte",
+      "grupoGeral": "Production Overheads",
+      "subGrupo": "Others Overheads"
+    },
+    "48102026": {
+      "id": "48102026",
+      "codigo": "48102026",
+      "descricao": "Desp. Viag.-Alug.Veic",
+      "grupoGeral": "Production Overheads",
+      "subGrupo": "Others Overheads"
+    },
+    "48102027": {
+      "id": "48102027",
+      "codigo": "48102027",
+      "descricao": "Desp. Viagem-Outros (Frigobar)",
+      "grupoGeral": "Production Overheads",
+      "subGrupo": "Others Overheads"
+    },
+    "48102030": {
+      "id": "48102030",
+      "codigo": "48102030",
+      "descricao": "Desp. Viagem - Combustível",
+      "grupoGeral": "Production Overheads",
+      "subGrupo": "Others Overheads"
+    },
+    "48101022": {
+      "id": "48101022",
+      "codigo": "48101022",
+      "descricao": "Transportes de Funcionários",
+      "grupoGeral": "Production Overheads",
+      "subGrupo": "Employment Cost"
+    },
+    "48101053": {
+      "id": "48101053",
+      "codigo": "48101053",
+      "descricao": "Despesas c/ Ação Social",
+      "grupoGeral": "Fixed Cost",
+      "subGrupo": "Other Expenses"
+    },
+    "48101051": {
+      "id": "48101051",
+      "codigo": "48101051",
+      "descricao": "Despesas c/ Encontros",
+      "grupoGeral": "Production Overheads",
+      "subGrupo": "Others Overheads"
+    }
+  },
+
+  "landings": {
+    "2025": {
+      "v1": {
+        "id": "v1",
+        "ano": 2025,
+        "versao": 1,
+        "nome": "Landing 2025 - Inicial (seed)",
+        "createdAt": 1747526400000,
+        "createdBy": "system",
+        "totalLinhas": 5,
+        "linhas": {
+          "lnd_001": {
+            "id": "lnd_001",
+            "filialId": "filial_santarem",
+            "ccId": "1569108",
+            "classeId": "48102046",
+            "descricao": "MENSALIDADE APRENDIZ (CIEE)",
+            "responsaveis": "RH",
+            "observacoes": "Renovação contrato CIEE",
+            "jan": 4500, "fev": 4500, "mar": 4500, "abr": 4500,
+            "mai": 4500, "jun": 4500, "jul": 4500, "ago": 4500,
+            "set": 4500, "out": 4500, "nov": 4500, "dez": 4500,
+            "total": 54000
+          },
+          "lnd_002": {
+            "id": "lnd_002",
+            "filialId": "filial_santarem",
+            "ccId": "1569297",
+            "classeId": "48102003",
+            "descricao": "CONTRATO TÁXI E UBER - SANTARÉM - MANUT",
+            "responsaveis": "Milton",
+            "observacoes": "",
+            "jan": 1800, "fev": 1800, "mar": 1800, "abr": 1800,
+            "mai": 1800, "jun": 1800, "jul": 1800, "ago": 1800,
+            "set": 1800, "out": 1800, "nov": 1800, "dez": 1800,
+            "total": 21600
+          },
+          "lnd_003": {
+            "id": "lnd_003",
+            "filialId": "filial_santarem",
+            "ccId": "1569297",
+            "classeId": "48102022",
+            "descricao": "RDV - REFEIÇÃO EQUIPE MANUTENÇÃO STM",
+            "responsaveis": "Milton",
+            "observacoes": "",
+            "jan": 1200, "fev": 1200, "mar": 1200, "abr": 1200,
+            "mai": 1200, "jun": 1200, "jul": 1200, "ago": 1200,
+            "set": 1200, "out": 1200, "nov": 1200, "dez": 1200,
+            "total": 14400
+          },
+          "lnd_004": {
+            "id": "lnd_004",
+            "filialId": "filial_santarem",
+            "ccId": "1569312",
+            "classeId": "48101022",
+            "descricao": "CONTRATO LANCHA MTB - A L GAMBOA (FROTA)",
+            "responsaveis": "Lucas",
+            "observacoes": "Contrato anual",
+            "jan": 8500, "fev": 8500, "mar": 8500, "abr": 8500,
+            "mai": 8500, "jun": 8500, "jul": 8500, "ago": 8500,
+            "set": 8500, "out": 8500, "nov": 8500, "dez": 8500,
+            "total": 102000
+          },
+          "lnd_005": {
+            "id": "lnd_005",
+            "filialId": "filial_santarem",
+            "ccId": "1569312",
+            "classeId": "48101053",
+            "descricao": "AÇÃO DE SUSTENTABILIDADE STM- PROJETO TRANSFORMAR",
+            "responsaveis": "Rafael",
+            "observacoes": "Projeto social",
+            "jan": 0, "fev": 0, "mar": 5000, "abr": 0,
+            "mai": 0, "jun": 5000, "jul": 0, "ago": 0,
+            "set": 5000, "out": 0, "nov": 0, "dez": 5000,
+            "total": 20000
+          }
+        }
+      }
+    }
+  },
+
+  "volumes": {
+    "2025": {
+      "filial_santarem": {
+        "landing": {
+          "id": "vol_lnd_stm_2025",
+          "ano": 2025,
+          "tipo": "landing",
+          "unidade": "ton",
+          "descricao": "Volume realizado 2025 (Landing) - Santarém",
+          "jan": 1200, "fev": 1100, "mar": 1300, "abr": 1250,
+          "mai": 1400, "jun": 1350, "jul": 1500, "ago": 1450,
+          "set": 1380, "out": 1420, "nov": 1300, "dez": 1200,
+          "total": 15850
+        }
+      }
+    }
+  }
+}
