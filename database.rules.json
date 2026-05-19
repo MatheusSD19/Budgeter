@@ -1,0 +1,79 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "usuarios": {
+      ".read": "auth != null && (root.child('usuarios').child(auth.uid).child('role').val() === 'admin' || root.child('usuarios').child(auth.uid).child('role').val() === 'financeiro')",
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('usuarios').child(auth.uid).child('role').val() === 'admin' || root.child('usuarios').child(auth.uid).child('role').val() === 'financeiro')",
+        ".write": "auth != null && (root.child('usuarios').child(auth.uid).child('role').val() === 'admin' || (auth.uid === $uid && !data.exists()))",
+        ".validate": "newData.hasChildren(['email','role'])",
+        "role": {
+          ".validate": "newData.isString() && (newData.val() === 'admin' || newData.val() === 'financeiro' || newData.val() === 'manager' || newData.val() === 'viewer')"
+        },
+        "filiais":  { ".validate": "newData.hasChildren() || !newData.exists()" },
+        "ccIds":    { ".validate": "newData.hasChildren() || !newData.exists()" },
+        "perfilId": { ".validate": "newData.isString() || !newData.exists()" }
+      }
+    },
+
+    "perfis": {
+      ".read": "auth != null",
+      ".write": "auth != null && root.child('usuarios').child(auth.uid).child('role').val() === 'admin'"
+    },
+
+    "filiais": {
+      ".read": "auth != null",
+      ".write": "auth != null && (root.child('usuarios').child(auth.uid).child('role').val() === 'admin' || root.child('usuarios').child(auth.uid).child('role').val() === 'financeiro')"
+    },
+
+    "centrosCusto": {
+      ".read": "auth != null",
+      ".write": "auth != null && (root.child('usuarios').child(auth.uid).child('role').val() === 'admin' || root.child('usuarios').child(auth.uid).child('role').val() === 'financeiro')"
+    },
+
+    "classesCusto": {
+      ".read": "auth != null",
+      ".write": "auth != null && (root.child('usuarios').child(auth.uid).child('role').val() === 'admin' || root.child('usuarios').child(auth.uid).child('role').val() === 'financeiro')"
+    },
+
+    "landings": {
+      "$ano": {
+        ".read": "auth != null",
+        ".write": "auth != null && (root.child('usuarios').child(auth.uid).child('role').val() === 'admin' || root.child('usuarios').child(auth.uid).child('role').val() === 'financeiro')",
+        "$versionId": {
+          ".validate": "newData.hasChildren(['createdAt','createdBy'])"
+        }
+      }
+    },
+
+    "budgets": {
+      "$ano": {
+        "$filialId": {
+          ".read": "auth != null && (root.child('usuarios').child(auth.uid).child('role').val() === 'admin' || root.child('usuarios').child(auth.uid).child('role').val() === 'financeiro' || root.child('usuarios').child(auth.uid).child('filiais').child($filialId).exists())",
+          ".write": "auth != null && (root.child('usuarios').child(auth.uid).child('role').val() === 'admin' || root.child('usuarios').child(auth.uid).child('role').val() === 'financeiro' || (root.child('usuarios').child(auth.uid).child('filiais').child($filialId).exists() && root.child('usuarios').child(auth.uid).child('role').val() !== 'viewer'))"
+        }
+      }
+    },
+
+    "volumes": {
+      "$ano": {
+        "$filialId": {
+          ".read": "auth != null && (root.child('usuarios').child(auth.uid).child('role').val() === 'admin' || root.child('usuarios').child(auth.uid).child('role').val() === 'financeiro' || root.child('usuarios').child(auth.uid).child('filiais').child($filialId).exists())",
+          ".write": "auth != null && (root.child('usuarios').child(auth.uid).child('role').val() === 'admin' || root.child('usuarios').child(auth.uid).child('role').val() === 'financeiro' || (root.child('usuarios').child(auth.uid).child('filiais').child($filialId).exists() && root.child('usuarios').child(auth.uid).child('role').val() !== 'viewer'))"
+        }
+      }
+    },
+
+    "justificativas": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+
+    "config": {
+      ".read": "auth != null",
+      ".write": "auth != null && root.child('usuarios').child(auth.uid).child('role').val() === 'admin'"
+    }
+  }
+}

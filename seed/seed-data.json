@@ -1,0 +1,78 @@
+{
+  "config": {
+    "versao": "2.0.0",
+    "anoAtual": 2026,
+    "anoLandingPadrao": 2025,
+    "moeda": "BRL",
+    "locale": "pt-BR"
+  },
+
+  "perfis": {
+    "perfil_admin": {
+      "id": "perfil_admin",
+      "nome": "Administrador",
+      "descricao": "Acesso total ao sistema",
+      "role": "admin",
+      "permissoes": {
+        "gerirUsuarios": true,
+        "gerirEstrutura": true,
+        "importarLanding": true,
+        "editarBudget": true,
+        "editarLanding": true,
+        "editarVolume": true,
+        "verRelatorios": true
+      }
+    },
+    "perfil_financeiro": {
+      "id": "perfil_financeiro",
+      "nome": "Financeiro",
+      "descricao": "Equipe financeira: importa Landing, edita Budget de todas as filiais",
+      "role": "financeiro",
+      "permissoes": {
+        "gerirUsuarios": false,
+        "gerirEstrutura": true,
+        "importarLanding": true,
+        "editarBudget": true,
+        "editarLanding": true,
+        "editarVolume": true,
+        "verRelatorios": true
+      }
+    },
+    "perfil_gestor_filial": {
+      "id": "perfil_gestor_filial",
+      "nome": "Gestor de Filial",
+      "descricao": "Edita Budget e Volume apenas das filiais e CCs autorizados",
+      "role": "manager",
+      "permissoes": {
+        "gerirUsuarios": false,
+        "gerirEstrutura": false,
+        "importarLanding": false,
+        "editarBudget": true,
+        "editarLanding": false,
+        "editarVolume": true,
+        "verRelatorios": true
+      }
+    },
+    "perfil_viewer": {
+      "id": "perfil_viewer",
+      "nome": "Visualizador",
+      "descricao": "Apenas leitura",
+      "role": "viewer",
+      "permissoes": {
+        "gerirUsuarios": false,
+        "gerirEstrutura": false,
+        "importarLanding": false,
+        "editarBudget": false,
+        "editarLanding": false,
+        "editarVolume": false,
+        "verRelatorios": true
+      }
+    }
+  },
+
+  "filiais": {},
+  "centrosCusto": {},
+  "classesCusto": {},
+  "landings": {},
+  "volumes": {}
+}

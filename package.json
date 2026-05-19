@@ -1,0 +1,17 @@
+{
+  "name": "budgeter",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Sistema de gestão orçamentária empresarial (Firebase)",
+  "scripts": {
+    "dev": "firebase emulators:start --import=./seed/export --export-on-exit=./seed/export",
+    "dev:fresh": "firebase emulators:start",
+    "seed": "node seed/seed.mjs",
+    "deploy": "firebase deploy --only hosting,database",
+    "deploy:rules": "firebase deploy --only database",
+    "serve": "firebase serve --only hosting"
+  },
+  "devDependencies": {
+    "firebase-tools": "^13.29.1"
+  }
+}

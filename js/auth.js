@@ -1,22 +1,22 @@
-// Budgeter - Auth
-// Gerenciamento de autenticação com Firebase
+// Budgeter - Auth (v2)
+// Suporta papéis admin / financeiro / manager / viewer e permissões por perfilId.
 
 class AuthManager {
     constructor() {
-        this.auth = window.firebase.auth;
-        this.onAuthStateChanged = window.firebase.onAuthStateChanged;
-        this.signInWithEmailAndPassword = window.firebase.signInWithEmailAndPassword;
-        this.signOut = window.firebase.signOut;
-        
         this.currentUser = null;
         this.userData = null;
-        
-        this.init();
+        this.perfilData = null;
+        this._ready = false;
     }
 
     init() {
-        // Escuta mudanças no estado de autenticação
-        this.onAuthStateChanged(this.auth, async (user) => {
+        if (!window.firebase) {
+            window.addEventListener('firebase:ready', () => this.init(), { once: true });
+            return;
+        }
+        const fb = window.firebase;
+
+        fb.onAuthStateChanged(fb.auth, async (user) => {
             if (user) {
                 this.currentUser = user;
                 await this.loadUserData(user.uid);
@@ -24,33 +24,26 @@ class AuthManager {
             } else {
                 this.currentUser = null;
                 this.userData = null;
+                this.perfilData = null;
                 this.showLogin();
             }
         });
 
-        // Setup formulário de login
         const loginForm = document.getElementById('login-form');
-        if (loginForm) {
-            loginForm.addEventListener('submit', (e) => this.handleLogin(e));
-        }
+        if (loginForm) loginForm.addEventListener('submit', (e) => this.handleLogin(e));
 
-        // Setup botão de logout
         const logoutBtn = document.getElementById('btn-logout');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', () => this.handleLogout());
-        }
+        if (logoutBtn) logoutBtn.addEventListener('click', () => this.handleLogout());
     }
 
     async handleLogin(e) {
         e.preventDefault();
-        
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const errorDiv = document.getElementById('login-error');
-
         try {
             errorDiv.textContent = '';
-            await this.signInWithEmailAndPassword(this.auth, email, password);
+            await window.firebase.signInWithEmailAndPassword(window.firebase.auth, email, password);
         } catch (error) {
             console.error('Login error:', error);
             errorDiv.textContent = this.getErrorMessage(error.code);
@@ -59,54 +52,63 @@ class AuthManager {
 
     async handleLogout() {
         try {
-            await this.signOut(this.auth);
-        } catch (error) {
-            console.error('Logout error:', error);
-            this.showToast('Erro ao sair', 'error');
+            await window.firebase.signOut(window.firebase.auth);
+        } catch (err) {
+            console.error('Logout error:', err);
         }
     }
 
     async loadUserData(uid) {
+        const fb = window.firebase;
         try {
-            const { db, ref, get } = window.firebase;
-            const snapshot = await get(ref(db, `usuarios/${uid}`));
-            
-            if (snapshot.exists()) {
-                this.userData = snapshot.val();
+            const snap = await fb.get(fb.ref(fb.db, `usuarios/${uid}`));
+            if (snap.exists()) {
+                this.userData = snap.val();
             } else {
-                // Cria usuário básico se não existir
+                // Self-bootstrap como viewer; admin precisa promover depois
                 this.userData = {
                     id: uid,
                     email: this.currentUser.email,
                     nome: this.currentUser.displayName || this.currentUser.email.split('@')[0],
                     role: 'viewer',
-                    unidades: [],
-                    createdAt: Date.now()
+                    perfilId: null,
+                    filiais: {},
+                    ccIds: {},
+                    ativo: true,
+                    createdAt: Date.now(),
                 };
-                
-                // Salva no banco
-                const { set } = window.firebase;
-                await set(ref(db, `usuarios/${uid}`), this.userData);
+                await fb.set(fb.ref(fb.db, `usuarios/${uid}`), this.userData);
             }
-        } catch (error) {
-            console.error('Error loading user data:', error);
+            // Carrega perfil associado (se houver)
+            if (this.userData.perfilId) {
+                const ps = await fb.get(fb.ref(fb.db, `perfis/${this.userData.perfilId}`));
+                this.perfilData = ps.exists() ? ps.val() : null;
+            }
+        } catch (err) {
+            console.error('Erro ao carregar usuário:', err);
             this.userData = null;
         }
     }
 
     showLogin() {
-        document.getElementById('login-screen').classList.remove('hidden');
-        document.getElementById('app').classList.add('hidden');
+        document.getElementById('login-screen')?.classList.remove('hidden');
+        document.getElementById('app')?.classList.add('hidden');
     }
 
     showApp() {
-        document.getElementById('login-screen').classList.add('hidden');
-        document.getElementById('app').classList.remove('hidden');
-        
-        // Dispara evento para outros módulos saberem que o app está pronto
-        window.dispatchEvent(new CustomEvent('auth:ready', { 
-            detail: { user: this.currentUser, userData: this.userData }
-        }));
+        document.getElementById('login-screen')?.classList.add('hidden');
+        document.getElementById('app')?.classList.remove('hidden');
+
+        // Mostra/oculta menu admin
+        const adminLink = document.getElementById('nav-admin');
+        if (adminLink) adminLink.classList.toggle('hidden', !this.isAdmin && !this.isFinanceiro);
+
+        if (!this._ready) {
+            this._ready = true;
+            window.dispatchEvent(new CustomEvent('auth:ready', {
+                detail: { user: this.currentUser, userData: this.userData, perfilData: this.perfilData },
+            }));
+        }
     }
 
     getErrorMessage(code) {
@@ -117,49 +119,51 @@ class AuthManager {
             'auth/wrong-password': 'Senha incorreta',
             'auth/invalid-credential': 'Email ou senha incorretos',
             'auth/too-many-requests': 'Muitas tentativas. Tente novamente mais tarde.',
-            'auth/network-request-failed': 'Erro de conexão. Verifique sua internet.'
+            'auth/network-request-failed': 'Erro de conexão. Verifique sua internet.',
         };
         return messages[code] || 'Erro ao fazer login. Tente novamente.';
     }
 
-    showToast(message, type = 'info') {
-        window.dispatchEvent(new CustomEvent('app:toast', {
-            detail: { message, type }
-        }));
+    // Helpers de permissão -------------------------------------------------
+    get isAuthenticated() { return !!this.currentUser; }
+    get isAdmin()         { return this.userData?.role === 'admin'; }
+    get isFinanceiro()    { return this.userData?.role === 'financeiro' || this.isAdmin; }
+    get isManager()       { return this.userData?.role === 'manager' || this.isFinanceiro; }
+    get isViewer()        { return this.userData?.role === 'viewer'; }
+
+    /** Filiais que o usuário acessa. Admin/financeiro veem todas. */
+    get userFiliais() {
+        if (this.isFinanceiro) return null; // sentinel = "todas"
+        return Object.keys(this.userData?.filiais || {});
     }
 
-    // Getters
-    get isAuthenticated() {
-        return !!this.currentUser;
+    /** CCs que o usuário pode editar. null = sem restrição (todas as CCs da filial). */
+    get userCcIds() {
+        if (this.isFinanceiro) return null;
+        const ids = Object.keys(this.userData?.ccIds || {});
+        return ids.length ? ids : null;
     }
 
-    get isAdmin() {
-        return this.userData?.role === 'admin';
+    hasAccessToFilial(filialId) {
+        if (this.isFinanceiro) return true;
+        return !!this.userData?.filiais?.[filialId];
     }
 
-    get isManager() {
-        return this.userData?.role === 'manager' || this.isAdmin;
-    }
-
-    get userUnidades() {
-        return this.userData?.unidades || [];
-    }
-
-    hasAccessToUnidade(unidadeId) {
-        return this.isAdmin || this.userUnidades.includes(unidadeId);
-    }
+    canEditBudget()   { return !this.isViewer && (this.isManager || this.isFinanceiro); }
+    canEditLanding()  { return this.isFinanceiro; }
+    canImportLanding(){ return this.isFinanceiro; }
+    canManageUsers()  { return this.isAdmin; }
+    canManageStructure() { return this.isFinanceiro; }
+    canEditVolume()   { return !this.isViewer && (this.isManager || this.isFinanceiro); }
 }
 
-// Inicializa quando o DOM estiver pronto
-let authManager;
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        authManager = new AuthManager();
-    });
-} else {
-    authManager = new AuthManager();
-}
-
+const authManager = new AuthManager();
 window.authManager = authManager;
 
-export default AuthManager;
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => authManager.init());
+} else {
+    authManager.init();
+}
+
+export default authManager;

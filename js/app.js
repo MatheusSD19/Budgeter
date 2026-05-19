@@ -1,133 +1,134 @@
-// Budgeter - Main App
-// Inicialização e coordenação de todos os módulos
+// Budgeter - App (v2)
+// Coordena: seleção de Filial + Ano, navegação, eventos globais e toasts.
+
+import db from './database.js';
 
 class App {
     constructor() {
-        this.db = window.db;
-        this.authManager = window.authManager;
-        
         this.state = {
-            unidadeSelecionada: null,
-            unidades: {}
+            filialId: null,
+            ano: new Date().getFullYear(),
+            filiais: {},
         };
-
         this.toastContainer = null;
     }
 
     async init() {
-        // Cria container de toasts
         this.createToastContainer();
+        window.addEventListener('app:toast', (e) => this.showToast(e.detail.message, e.detail.type));
 
-        // Aguarda autenticação
-        window.addEventListener('auth:ready', async (e) => {
-            console.log('App ready, user:', e.detail.user.email);
-            await this.onAuthReady();
-        });
-
-        // Setup eventos globais
-        window.addEventListener('app:toast', (e) => {
-            this.showToast(e.detail.message, e.detail.type);
-        });
-
-        // Toggle sidebar
         const sidebarToggle = document.getElementById('sidebar-toggle');
-        if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', () => this.toggleSidebar());
-        }
+        sidebarToggle?.addEventListener('click', () => this.toggleSidebar());
 
-        // Seletor de unidade
-        const unidadeSelect = document.getElementById('unidade-select');
-        if (unidadeSelect) {
-            unidadeSelect.addEventListener('change', (e) => this.onUnidadeChange(e.target.value));
-        }
+        const filialSelect = document.getElementById('filial-select');
+        filialSelect?.addEventListener('change', (e) => this.onFilialChange(e.target.value));
+
+        const anoSelect = document.getElementById('ano-select');
+        anoSelect?.addEventListener('change', (e) => this.onAnoChange(e.target.value));
+
+        window.addEventListener('auth:ready', () => this.onAuthReady());
     }
 
     async onAuthReady() {
-        // Inicializa componentes
         if (window.initTree) {
             window.initTree();
-            
-            // Setup callback de seleção
             window.treeComponent.onSelect((item) => {
                 window.dispatchEvent(new CustomEvent('tree:select', { detail: item }));
             });
         }
+        if (window.initBudgetEditor) window.initBudgetEditor();
 
-        if (window.initBudgetEditor) {
-            window.initBudgetEditor();
-        }
-
-        // Carrega unidades disponíveis
-        await this.loadUnidades();
+        await this.loadConfig();
+        await this.loadFiliais();
+        this.populateAnoSelect();
     }
 
-    async loadUnidades() {
+    async loadConfig() {
         try {
-            const unidades = await this.db.getUnidades();
-            this.state.unidades = unidades;
-
-            // Filtra unidades que o usuário tem acesso
-            const userUnidades = window.authManager.userUnidades;
-            const isAdmin = window.authManager.isAdmin;
-
-            const unidadesDisponiveis = Object.values(unidades).filter(u => {
-                return isAdmin || userUnidades.includes(u.id);
-            });
-
-            // Preenche select
-            const select = document.getElementById('unidade-select');
-            select.innerHTML = '<option value="">Selecione a unidade...</option>';
-
-            unidadesDisponiveis.forEach(u => {
-                const option = document.createElement('option');
-                option.value = u.id;
-                option.textContent = u.nome;
-                select.appendChild(option);
-            });
-
-            // Seleciona primeira unidade automaticamente se só tiver uma
-            if (unidadesDisponiveis.length === 1) {
-                select.value = unidadesDisponiveis[0].id;
-                this.onUnidadeChange(unidadesDisponiveis[0].id);
-            }
-        } catch (error) {
-            console.error('Erro ao carregar unidades:', error);
-            this.showToast('Erro ao carregar unidades', 'error');
+            const fb = window.firebase;
+            const snap = await fb.get(fb.ref(fb.db, 'config'));
+            const cfg = snap.exists() ? snap.val() : {};
+            if (cfg.anoAtual) this.state.ano = cfg.anoAtual;
+        } catch (err) {
+            console.warn('Sem config inicial, usando defaults', err);
         }
     }
 
-    async onUnidadeChange(unidadeId) {
-        if (!unidadeId) {
-            this.state.unidadeSelecionada = null;
-            if (window.treeComponent) {
-                window.treeComponent.loadUnidade(null);
+    async loadFiliais() {
+        try {
+            const filiais = await db.getFiliais();
+            this.state.filiais = filiais;
+
+            const userFiliais = window.authManager.userFiliais; // null = todas
+            const list = Object.values(filiais).filter((f) => {
+                if (!f.ativo && f.ativo !== undefined) return false;
+                return userFiliais === null || userFiliais.includes(f.id);
+            });
+
+            const select = document.getElementById('filial-select');
+            if (!select) return;
+            select.innerHTML = '<option value="">Filial...</option>';
+            list.forEach((f) => {
+                const opt = document.createElement('option');
+                opt.value = f.id;
+                opt.textContent = f.nome + (f.codigo ? ` (${f.codigo})` : '');
+                select.appendChild(opt);
+            });
+
+            if (list.length === 1) {
+                select.value = list[0].id;
+                this.onFilialChange(list[0].id);
+            } else if (list.length === 0) {
+                this.showToast('Nenhuma filial disponível. Use o painel Admin para cadastrar.', 'warning', 6000);
             }
-            return;
+        } catch (err) {
+            console.error('Erro ao carregar filiais:', err);
+            this.showToast('Erro ao carregar filiais', 'error');
         }
+    }
 
-        this.state.unidadeSelecionada = unidadeId;
+    populateAnoSelect() {
+        const select = document.getElementById('ano-select');
+        if (!select) return;
+        const atual = this.state.ano;
+        select.innerHTML = '';
+        for (let y = atual - 2; y <= atual + 2; y++) {
+            const opt = document.createElement('option');
+            opt.value = y;
+            opt.textContent = y;
+            if (y === atual) opt.selected = true;
+            select.appendChild(opt);
+        }
+    }
 
-        // Atualiza árvore
+    async onFilialChange(filialId) {
+        this.state.filialId = filialId;
+        const filial = this.state.filiais[filialId];
+        const breadcrumb = document.getElementById('breadcrumb-filial');
+        if (breadcrumb) breadcrumb.textContent = filial?.nome || 'Filial';
+
+        window.dispatchEvent(new CustomEvent('app:filial-change', { detail: { filialId } }));
+
         if (window.treeComponent) {
-            await window.treeComponent.loadUnidade(unidadeId);
+            await window.treeComponent.loadFilial(filialId, this.state.ano);
             window.treeComponent.expandAll();
         }
+    }
 
-        // Atualiza breadcrumb
-        const unidade = this.state.unidades[unidadeId];
-        if (unidade) {
-            document.getElementById('breadcrumb-unidade').textContent = unidade.nome;
+    async onAnoChange(ano) {
+        this.state.ano = Number(ano);
+        window.dispatchEvent(new CustomEvent('app:ano-change', { detail: { ano: this.state.ano } }));
+        if (window.treeComponent && this.state.filialId) {
+            await window.treeComponent.loadFilial(this.state.filialId, this.state.ano);
+            window.treeComponent.expandAll();
         }
     }
 
     toggleSidebar() {
         const sidebar = document.getElementById('sidebar');
+        if (!sidebar) return;
         sidebar.classList.toggle('collapsed');
-        
-        // Em mobile, usa classe diferente
-        if (window.innerWidth <= 768) {
-            sidebar.classList.toggle('open');
-        }
+        if (window.innerWidth <= 768) sidebar.classList.toggle('open');
     }
 
     createToastContainer() {
@@ -139,22 +140,8 @@ class App {
     showToast(message, type = 'info', duration = 3000) {
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
-        
-        const icons = {
-            success: '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="#10b981" stroke-width="2"><path d="M4 10l4 4 8-8"/></svg>',
-            error: '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="#ef4444" stroke-width="2"><circle cx="10" cy="10" r="8"/><path d="M7 7l6 6M13 7l-6 6"/></svg>',
-            warning: '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M10 4l6 10H4z"/><path d="M10 9v3"/></svg>',
-            info: '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="#3b82f6" stroke-width="2"><circle cx="10" cy="10" r="8"/><path d="M10 6v4M10 14h.01"/></svg>'
-        };
-
-        toast.innerHTML = `
-            ${icons[type] || icons.info}
-            <span>${message}</span>
-        `;
-
+        toast.textContent = message;
         this.toastContainer.appendChild(toast);
-
-        // Remove após duração
         setTimeout(() => {
             toast.style.opacity = '0';
             toast.style.transform = 'translateX(100%)';
@@ -163,18 +150,11 @@ class App {
     }
 }
 
-// Inicializa app quando DOM estiver pronto
 let app;
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        app = new App();
-        app.init();
-        window.app = app;
-    });
+    document.addEventListener('DOMContentLoaded', () => { app = new App(); app.init(); window.app = app; });
 } else {
-    app = new App();
-    app.init();
-    window.app = app;
+    app = new App(); app.init(); window.app = app;
 }
 
 export default App;
